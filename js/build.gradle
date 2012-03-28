@@ -1,0 +1,54 @@
+packageJs << {
+    def desktopJs = [
+        'lib/json2.min.js',
+        'lib/base64.min.js',
+        'lib/jquery-1.7.1.min.js',
+        'lib/jquery-xdr.js',
+        'lib/jquery.stream-1.2.js',
+        'lib/swfobject.js',
+        'lib/web_socket.js',
+        'lib/raphael.2.0.2.min.js',
+        'clik-jquery.js',
+        'clik-utils.js',
+        'desktop/flashsocket.js',
+        'desktop/atom.js',
+        'desktop/eventbus.js',
+        'desktop/clikstream.js',
+        'desktop/confmanager.js',
+        'desktop/conf.js',
+        'desktop/overlay.js',
+        'desktop/core.js',
+        'clik.js',
+        'desktop/clik-impl.js'
+    ]
+
+    minify 'clik-mobile.gapless.min.js', [
+        'clik-shimcheck.js',
+        'clik.js',
+        'clik-mobile-bridge.js',
+        'clik-mobile-gapless.js'
+    ]
+
+    def mobileJs = [
+        'clik-shimcheck.js',
+        'clik.js',
+        'clik-mobile.js'
+    ]
+
+
+    // Compile desktop and mobile-shim:
+    minify 'clik-desktop.min.js', desktopJs
+    def desktopShimJs = desktopJs.clone()
+    desktopShimJs << 'mobile/desktop-shim.js'
+    minify 'clik-mobile.desktop.min.js', desktopShimJs
+
+    // Compile mobile JS for each platform:
+    [
+        'android',
+        'iphone',
+        'winphone'
+    ].each {
+        def thisMobileJs = mobileJs.plus(1, "lib/${it}/phonegap-1.2.0.js")
+        minify "clik-mobile.${it}.min.js", thisMobileJs
+    }
+}
